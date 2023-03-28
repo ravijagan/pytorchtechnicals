@@ -9,11 +9,9 @@ from torch import nn
 from samp_models import *
 
 from torchvision.ops import sigmoid_focal_loss
-print("cuda available", torch.cuda.is_available())
+
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-device= "cpu" # "cuda"
 # 1) Model
 # Linear model f = wx + b , sigmoid at the end
 
@@ -32,8 +30,8 @@ batch_size = 16
 total_samples = train_dataset.n_samples
 n_iterations = math.ceil(total_samples / batch_size)
 print(total_samples, n_iterations)
-num_epochs = 30
-learning_rate = 1e-5
+num_epochs = 5
+learning_rate = 1e-4
 #optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 criterion = nn.BCELoss()
@@ -95,7 +93,7 @@ test_loader = DataLoader(dataset=test_dataset,
 dataiter_test = iter(test_loader)
 # TBD set model to no train
 model.eval()
-for i in range(10):
+for i in range(100):
     testdata = next(dataiter_test)
     X_test, y_test = testdata
     y_test = y_test.to(torch.float32)
@@ -103,8 +101,12 @@ for i in range(10):
     y_pred = model(X_test)  # .flatten()
     # print if anomaly or not, and
     # what is the distance between pred an train ideally should be zero unless anomaly
-    for t in range(10):
-        print(i,  y_test[t], criterion(y_pred[t], X_train[t])) #"pred" , y_pred,  "xtest", X_test, " \n ytest", y_test)
+    for t in range(y_test.shape[0]):
+        dist = criterion(y_pred[t], X_test[t])
+        if y_test[t] > 0.5:
+            print(i,  y_test[t], dist )
+        else:
+            print(i, "\t \t", y_test[t], dist )#"pred" , y_pred,  "xtest", X_test, " \n ytest", y_test)
 
 
 """

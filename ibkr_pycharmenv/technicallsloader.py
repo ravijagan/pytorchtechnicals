@@ -12,7 +12,11 @@ from sklearn.model_selection import train_test_split
 # -> divide dataset into small batches
 
 from torch.utils.data import Dataset, DataLoader
-
+print("cuda available", torch.cuda.is_available())
+if torch.cuda.is_available():
+    device = 'cuda'
+    pass
+#hardcode for now some pblm with ortho
 device = 'cpu'
 class TechDataset(Dataset):
     def __init__(self, x_data, y_data):
@@ -53,26 +57,26 @@ def getdata():
         x_data = tmpdf[ :, 1:-1]  # last column is Y first is timestamp
         y_data = tmpdf[ :, -1]
         y_data = np.clip(y_data, -5., 5.)
-        thresh = 5.
+        thresh = 4.  # thresh = 3 means $3 increase in 5 mins
         # convert to boolean for logistic or similar application 
-        #bool_thresh_array = y_data > thresh # used for logistic type 
-        #y_data = bool_thresh_array
+        bool_thresh_array = y_data > thresh # used for logistic type
+        y_data = bool_thresh_array
         #
         X_train, X_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.2, random_state=1234)
-        sc = StandardScaler()
-        #sc = MinMaxScaler()
-        X_train = sc.fit_transform(X_train)
-        X_test = sc.transform(X_test)
 
-        negonly = 1 # used for enc dec
+        negonly = 1 # used for enc dec train with negative only but test with both
         if negonly:
             # train only where Y stays within the threshold
-            y_train2 = y_train[y_train < thresh]
-            x_train2 = X_train[y_train < thresh]
+            y_train2 = y_train[y_train < 1] # boolean <1 is False
+            x_train2 = X_train[y_train < 1]
             X_train = x_train2
             y_train = y_train2
             # for testing test everything
 
+        sc = StandardScaler()
+        # sc = MinMaxScaler()
+        X_train = sc.fit_transform(X_train)
+        X_test = sc.transform(X_test)
         scale_y = 1
         # see why this is useful ricardo answer
         #https://stats.stackexchange.com/questions/111467/is-it-necessary-to-scale-the-target-value-in-addition-to-scaling-features-for-re

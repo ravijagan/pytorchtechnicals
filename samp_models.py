@@ -20,7 +20,7 @@ class AutoEncoder(torch.nn.Module):
         # Necessary in order to log C++ API usage and other internals
         super().__init__()
         encoder = torch.nn.Linear(features, hidden)
-        self.encoder =  ortho(encoder) # but the axis
+        self.encoder =  ortho(encoder) # but the axis ?
         self.decoder = torch.nn.Linear(hidden, features)
     def forward(self, X):
         return self.decoder(self.encoder(X))
