@@ -1,6 +1,7 @@
 
 from torch import nn
 from torch.nn.utils.parametrizations import orthogonal  as ortho
+import torch.nn.functional as F
 import torch
 class Model(nn.Module):
     def __init__(self, n_input_features):
@@ -21,7 +22,7 @@ class AutoEncoder(torch.nn.Module):
         super().__init__()
         encoder = torch.nn.Linear(features, hidden)
         self.encoder =  ortho(encoder) # but the axis ?
-        self.decoder = torch.nn.Linear(hidden, features)
+        self.decoder = ortho(torch.nn.Linear(hidden, features))
     def forward(self, X):
         return self.decoder(self.encoder(X))
 

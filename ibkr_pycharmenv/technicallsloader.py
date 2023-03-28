@@ -59,7 +59,7 @@ def getdata():
         y_data = np.clip(y_data, -10., 10.)
         thresh = 7.  # thresh = 3 means $3 increase in 5 mins
         # convert to boolean for logistic or similar application 
-        bool_thresh_array = y_data > thresh # used for logistic type
+        bool_thresh_array = abs(y_data) > thresh # used for logistic type
         y_data = bool_thresh_array
         #
         X_train, X_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.2, random_state=1234)
