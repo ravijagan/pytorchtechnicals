@@ -9,7 +9,7 @@ from torch import nn
 from samp_models import *
 
 from torchvision.ops import sigmoid_focal_loss
-print(torch.cuda.is_available())
+print("cuda available", torch.cuda.is_available())
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
