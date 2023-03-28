@@ -56,8 +56,8 @@ def getdata():
         # here the first column is the class label, the rest are the features
         x_data = tmpdf[ :, 1:-1]  # last column is Y first is timestamp
         y_data = tmpdf[ :, -1]
-        y_data = np.clip(y_data, -5., 5.)
-        thresh = 4.  # thresh = 3 means $3 increase in 5 mins
+        y_data = np.clip(y_data, -10., 10.)
+        thresh = 7.  # thresh = 3 means $3 increase in 5 mins
         # convert to boolean for logistic or similar application 
         bool_thresh_array = y_data > thresh # used for logistic type
         y_data = bool_thresh_array
@@ -77,7 +77,7 @@ def getdata():
         # sc = MinMaxScaler()
         X_train = sc.fit_transform(X_train)
         X_test = sc.transform(X_test)
-        scale_y = 1
+        scale_y =True
         # see why this is useful ricardo answer
         #https://stats.stackexchange.com/questions/111467/is-it-necessary-to-scale-the-target-value-in-addition-to-scaling-features-for-re
 

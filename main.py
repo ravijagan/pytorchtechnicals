@@ -93,7 +93,7 @@ test_loader = DataLoader(dataset=test_dataset,
 dataiter_test = iter(test_loader)
 # TBD set model to no train
 model.eval()
-for i in range(100):
+for i in range(10):
     testdata = next(dataiter_test)
     X_test, y_test = testdata
     y_test = y_test.to(torch.float32)
