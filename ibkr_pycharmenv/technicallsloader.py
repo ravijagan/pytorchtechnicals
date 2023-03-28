@@ -53,7 +53,7 @@ def getdata():
         x_data = tmpdf[ :, 1:-1]  # last column is Y first is timestamp
         y_data = tmpdf[ :, -1]
         y_data = np.clip(y_data, -5., 5.)
-        thresh = 3.
+        thresh = 5.
         # convert to boolean for logistic or similar application 
         #bool_thresh_array = y_data > thresh # used for logistic type 
         #y_data = bool_thresh_array
@@ -63,16 +63,19 @@ def getdata():
         #sc = MinMaxScaler()
         X_train = sc.fit_transform(X_train)
         X_test = sc.transform(X_test)
-        # see why this is useful ricardo answer
-        #https://stats.stackexchange.com/questions/111467/is-it-necessary-to-scale-the-target-value-in-addition-to-scaling-features-for-re
-        scale_y = 1
 
         negonly = 1 # used for enc dec
         if negonly:
-            y_train2 = y_train[y_train > thresh]
-            x_train2 = X_train[y_train > thresh]
+            # train only where Y stays within the threshold
+            y_train2 = y_train[y_train < thresh]
+            x_train2 = X_train[y_train < thresh]
             X_train = x_train2
             y_train = y_train2
+            # for testing test everything
+
+        scale_y = 1
+        # see why this is useful ricardo answer
+        #https://stats.stackexchange.com/questions/111467/is-it-necessary-to-scale-the-target-value-in-addition-to-scaling-features-for-re
 
         if scale_y:
             scy = StandardScaler()

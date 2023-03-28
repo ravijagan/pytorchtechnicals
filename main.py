@@ -32,7 +32,7 @@ batch_size = 16
 total_samples = train_dataset.n_samples
 n_iterations = math.ceil(total_samples / batch_size)
 print(total_samples, n_iterations)
-num_epochs = 10
+num_epochs = 30
 learning_rate = 1e-5
 #optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
@@ -64,12 +64,16 @@ for epoch in range(num_epochs):
         #criterion = nn.BCELoss(weight=wts)  # targets should be 0 and 1
         criterion = nn.MSELoss()
         #criterion = nn.L1Loss(reduce='mean')
+
+        #for encoded decoder we want output to look like the X-train
         loss = criterion(y_pred, X_train)
         #loss = sigmoid_focal_loss (y_pred, y_train, alpha =-0.25, gamma = 2 , reduction='mean')
         loss.backward()
         optimizer.step()
         if i%100 == 0:
             print(epoch, i, "loss", loss)
+
+        # debug printing to see gradients not 0 or infinity
         if i< 3 or i% 2000==0:
             print(epoch, i, "loss", loss)
             #print("\n \t predicted", y_pred.flatten(), "\n \t actual" , y_train.flatten())
@@ -97,6 +101,8 @@ for i in range(10):
     y_test = y_test.to(torch.float32)
     X_test = X_test.to(torch.float32)  # TBD hack understand this cuda forces
     y_pred = model(X_test)  # .flatten()
+    # print if anomaly or not, and
+    # what is the distance between pred an train ideally should be zero unless anomaly
     for t in range(10):
         print(i,  y_test[t], criterion(y_pred[t], X_train[t])) #"pred" , y_pred,  "xtest", X_test, " \n ytest", y_test)
 
