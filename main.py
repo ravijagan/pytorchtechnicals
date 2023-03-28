@@ -13,71 +13,70 @@ print(torch.cuda.is_available())
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-device="cuda"
+device= "cpu" # "cuda"
 # 1) Model
 # Linear model f = wx + b , sigmoid at the end
 
 # create dataset
-dataset = getdata()
+train_dataset, test_dataset = getdata()
 
-neural_model = NeuralNet(input_size = dataset.n_features, hidden_size = 4,
+neural_model = NeuralNet(input_size = train_dataset.n_features, hidden_size = 4,
                          op_size=1).to(device)
-model = logisticModel(dataset.n_features).to(device='cuda')
+model = logisticModel(train_dataset.n_features).to(device=device)
 
 model = neural_model
+model = AutoEncoder(train_dataset.n_features, 4)# train_dataset.n_features/2)
 # Training loop
-num_epochs = 2
+
 batch_size = 16
-total_samples = dataset.n_samples
+total_samples = train_dataset.n_samples
 n_iterations = math.ceil(total_samples / batch_size)
 print(total_samples, n_iterations)
-num_epochs = 100
-learning_rate = 1e-4
-
+num_epochs = 10
+learning_rate = 1e-5
 #optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 criterion = nn.BCELoss()
-for epoch in range(0,1):
-    learning_rate = 1e-3
+for epoch in range(num_epochs):
+    learning_rate *= 0.9
     # Load whole dataset with DataLoader
     # shuffle: shuffle data, good for training
     # num_workers: faster loading with multiple subprocesses
     # !!! IF YOU GET AN ERROR DURING LOADING, SET num_workers TO 0 !!!
-    train_loader = DataLoader(dataset=dataset,
+    train_loader = DataLoader(dataset=train_dataset,
                               batch_size=batch_size,
                               shuffle= False, #True,
                               num_workers=0)
     # convert to an iterator and look at one random sample
-    dataiter = iter(train_loader)
+    dataiter_train = iter(train_loader)
     for i in range(n_iterations -1 ): # range(num_epochs):
-        learning_rate *= 0.999
-        traindata = next(dataiter)
+        traindata = next(dataiter_train)
         X_train, y_train = traindata
         y_train = y_train.to(torch.float32)
         X_train=X_train.to(torch.float32) # TBD hack understand this cuda forces
-        y_pred = model(X_train) #.flatten()
-
+        y_pred = model(X_train)
         # normalize this or scale this ?
         #y_train to be weighten higher for 1 , less for 0
-        pos_samp = y_train > 2
-        wts = (pos_samp+ 0.001) * 2
-        hack_y_train = y_train + wts
+        #pos_samp = y_train > 2
+        #wts = (pos_samp+ 0.001) * 2
+        #hack_y_train = y_train + wts
         #y_train = hack_y_train
         #criterion = nn.BCELoss(weight=wts)  # targets should be 0 and 1
         criterion = nn.MSELoss()
-        criterion = nn.L1Loss(reduce='mean')
-        loss = criterion(y_pred, hack_y_train)
+        #criterion = nn.L1Loss(reduce='mean')
+        loss = criterion(y_pred, X_train)
         #loss = sigmoid_focal_loss (y_pred, y_train, alpha =-0.25, gamma = 2 , reduction='mean')
         loss.backward()
         optimizer.step()
-        if i< 10 or i%50==0:
-            print( i, "loss", loss)
-            print("\n \t predicted", y_pred, "\n \t actual" , y_train, "\tpos samp", pos_samp.sum())
-            print( torch.argsort(y_pred.flatten()) , "\nactual", torch.argsort(y_train.flatten()))
-            print("---gradients---")
+        if i%100 == 0:
+            print(epoch, i, "loss", loss)
+        if i< 3 or i% 2000==0:
+            print(epoch, i, "loss", loss)
+            #print("\n \t predicted", y_pred.flatten(), "\n \t actual" , y_train.flatten())
+            #print( torch.argsort(y_pred.flatten()) , "\nactual", torch.argsort(y_train.flatten()))
+            print(i, "---gradients---")
             for p in model.parameters():
                 try:
-                    print(p)
                     print( "\t grad", p.grad)
                 except:
                     traceback.print_exc()
@@ -85,7 +84,21 @@ for epoch in range(0,1):
             print("-----\n")
         optimizer.zero_grad(set_to_none=True)
 
-    print(f""" EPOCH {epoch}, {loss}  learning_rate Epoch: {epoch + 1}/{num_epochs}, Step {epoch + 1}/{n_iterations}""")
+test_loader = DataLoader(dataset=test_dataset,
+                              batch_size=batch_size,
+                              shuffle= False, #True,
+                              num_workers=0)
+dataiter_test = iter(test_loader)
+# TBD set model to no train
+model.eval()
+for i in range(10):
+    testdata = next(dataiter_test)
+    X_test, y_test = testdata
+    y_test = y_test.to(torch.float32)
+    X_test = X_test.to(torch.float32)  # TBD hack understand this cuda forces
+    y_pred = model(X_test)  # .flatten()
+    for t in range(10):
+        print(i,  y_test[t], criterion(y_pred[t], X_train[t])) #"pred" , y_pred,  "xtest", X_test, " \n ytest", y_test)
 
 
 """

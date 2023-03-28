@@ -1,5 +1,6 @@
 
 from torch import nn
+from torch.nn.utils.parametrizations import orthogonal  as ortho
 import torch
 class Model(nn.Module):
     def __init__(self, n_input_features):
@@ -10,6 +11,22 @@ class Model(nn.Module):
         y_pred = torch.sigmoid(self.linear(x))
         return y_pred
 
+import torch
+
+
+# Use torch.nn.Module to create models
+class AutoEncoder(torch.nn.Module):
+    def __init__(self, features: int, hidden: int):
+        # Necessary in order to log C++ API usage and other internals
+        super().__init__()
+        encoder = torch.nn.Linear(features, hidden)
+        self.encoder =  ortho(encoder) # but the axis
+        self.decoder = torch.nn.Linear(hidden, features)
+    def forward(self, X):
+        return self.decoder(self.encoder(X))
+
+    def encode(self, X):
+        return self.encoder(X)
 
 # Fully connected neural network with one hidden layer
 class NeuralNet(nn.Module):
@@ -21,7 +38,7 @@ class NeuralNet(nn.Module):
         self.siz2  = int(hidden_size/2)
         self.l2 = nn.Linear(hidden_size, self.siz2)
         self.relu2 = nn.ReLU()
-        self.l3 = nn.Linear(self.siz2, op_size)
+        self.l3 = nn.Linear(self.siz2, op_size) # op_size 2 for binary
 
 
     def forward(self, x):
