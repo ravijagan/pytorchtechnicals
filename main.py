@@ -1,6 +1,6 @@
 # This is a sample Python script.
 import torch
-import sys
+import sys, csv
 import traceback
 sys.path.extend(["C:\\Users\\ravi\\PycharmProjects\\ibkr-jun2021"])
 import dbutils
@@ -35,6 +35,13 @@ learning_rate = 1e-3
 #optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 criterion = nn.BCELoss()
+test_loader = DataLoader(dataset=test_dataset,
+                              batch_size=batch_size,
+                              shuffle= False, #True,
+                              num_workers=0)
+dataiter_test = iter(test_loader)
+# TBD set model to no train
+model.eval()
 for epoch in range(num_epochs):
     learning_rate *= 0.9
     # Load whole dataset with DataLoader
@@ -86,28 +93,30 @@ for epoch in range(num_epochs):
             print("-----\n")
         optimizer.zero_grad(set_to_none=True)
 
-test_loader = DataLoader(dataset=test_dataset,
-                              batch_size=batch_size,
-                              shuffle= False, #True,
-                              num_workers=0)
-dataiter_test = iter(test_loader)
-# TBD set model to no train
-model.eval()
-for i in range(10):
+#if anomaly detection is used encoder/decoder the y_test is only a reference to show whether anomaly or not
+f = open('deletme.csv', 'w')
+w = csv.writer(f)
+for i in range(1000):
     testdata = next(dataiter_test)
     X_test, y_test = testdata
-    y_test = y_test.to(torch.float32)
+    y_test = y_test.to(torch.float32) # this has actual future value
     X_test = X_test.to(torch.float32)  # TBD hack understand this cuda forces
-    y_pred = model(X_test)  # .flatten()
+    y_pred = model(X_test)  # .flatten() toss in case of enc/dec/anomaly
+    mid_dist = criterion(y_pred, X_test)
+    #mid_dist = torch.tensor(0.06) # magic number
     # print if anomaly or not, and
     # what is the distance between pred an train ideally should be zero unless anomaly
-    for t in range(y_test.shape[0]):
-        dist = criterion(y_pred[t], X_test[t])
-        if y_test[t] > 0.5:
-            print(i,  y_test[t], dist )
+    for t in range(y_test.shape[0] -1 ):
+        dist_t  = criterion(y_pred[t], X_test[t])
+        if dist_t > mid_dist *4: # more than median means cannot encode correctly
+            print(i, y_test[t].item(), "distance", dist_t.item(), "median", mid_dist.item() ) #anomaly case
         else:
-            print(i, "\t \t", y_test[t], dist )#"pred" , y_pred,  "xtest", X_test, " \n ytest", y_test)
-
+            #normal case
+            print(i, "\t \t \t", y_test[t].item(), "distance", dist_t.item(), "<", mid_dist.item()  )#"pred" , y_pred,  "xtest", X_test, " \n ytest", y_test)
+        try:
+            w.writerow([i, y_test[t].item(),dist_t.item()])
+        except:
+            pass
 
 """
 

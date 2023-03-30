@@ -23,7 +23,7 @@ class TechDataset(Dataset):
         self.x_data = torch.tensor( x_data, device = device)# tmpdf[:, 1:])  # size [n_samples, n_features]
         #self.y_data_raw = torch.tensor(tmpdf[ :, -1] , device = device )#tmpdf[:, [0]])  # size [n_samples, 1]
         self.y_data = torch.tensor(y_data, device= device)#.type(torch.IntTensor)
-        self.y_data = torch.clip(self.y_data, 0., 1.0)# 1e-9, 1-1e-9) #doc says less than 1 float uncomment if problem
+        #self.y_data = torch.clip(self.y_data, 0., 1.0)# 1e-9, 1-1e-9) #doc says less than 1 float uncomment if problem
         #print("x shape",self.x_data.shape , self.y_data.shape)
         self.n_samples = x_data.shape[0]
         self.n_features = x_data.shape[1]
@@ -48,7 +48,7 @@ def getdata():
                  --*, 
                 timestampx, high_ema_spread_2, rsi_2, 
                  sma_2, ema_2, macd_2,macd_10,
-            (lead(close, 3) over (order by timestampx)  - close) as  gain
+            (lead(close, 1) over (order by timestampx)  - close) as  gain
              from technicals
              where hour_min > 1000 and hour_min < 1350
          """
@@ -63,7 +63,7 @@ def getdata():
         thresh = 7.  # thresh = 3 means $3 increase in 5 mins
         # convert to boolean for logistic or similar application 
         bool_thresh_array = abs(y_data) > thresh # used for logistic type
-        y_data = bool_thresh_array
+        #y_data = bool_thresh_array
         #
         X_train, X_test, y_train, y_test = train_test_split(x_data, y_data, test_size=0.2, random_state=1234)
 
@@ -80,7 +80,7 @@ def getdata():
         # sc = MinMaxScaler()
         X_train = sc.fit_transform(X_train)
         X_test = sc.transform(X_test)
-        scale_y =True
+        scale_y = 0#True
         # see why this is useful ricardo answer
         #https://stats.stackexchange.com/questions/111467/is-it-necessary-to-scale-the-target-value-in-addition-to-scaling-features-for-re
 
