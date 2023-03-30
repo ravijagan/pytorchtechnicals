@@ -40,14 +40,17 @@ class TechDataset(Dataset):
 def getdata():
 # Initialize data, download, etc.
         # read with numpy or pandas
+        #['slowk', 'lowlowbool',
+        #           'highhighbool', 'parabolicsar', 'sma', 'ema', 'macd', 'macdhist', 'high_ema_spread', 'rsi']
         q = """
             select 
                 --timestampx , sma_2 , close, ema_2, macd_2, 
                  --*, 
                 timestampx, high_ema_spread_2, rsi_2, 
                  sma_2, ema_2, macd_2,macd_10,
-            (lead(close, 5) over (order by timestampx)  - close) as  gain
+            (lead(close, 3) over (order by timestampx)  - close) as  gain
              from technicals
+             where hour_min > 1000 and hour_min < 1350
          """
         # get it as numpy becauase df to numpy will require more steps and nan can be stripped
         #['timestampx' , 'hour_min' , 'close', 'ema_10', 'macd_10']

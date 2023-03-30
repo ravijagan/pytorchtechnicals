@@ -17,14 +17,24 @@ import torch
 
 # Use torch.nn.Module to create models
 class AutoEncoder(torch.nn.Module):
-    def __init__(self, features: int, hidden: int):
+    def __init__(self, features: int, hidden_size: int):
         # Necessary in order to log C++ API usage and other internals
         super().__init__()
-        encoder = torch.nn.Linear(features, hidden)
-        self.encoder =  ortho(encoder) # but the axis ?
-        self.decoder = ortho(torch.nn.Linear(hidden, features))
+        #self.h = int(hidden_size/2)
+        self.lin1 = nn.Linear(features, hidden_size)
+        #self.lin2 = nn.Linear(hidden_size, self.h)
+        self.relu1 = nn.ReLU(hidden_size)
+        self.encoder = self.relu1 #(self.lin1)# self.relu1
+        self.decoder1 = torch.nn.Linear(hidden_size, features)
+
     def forward(self, X):
-        return self.decoder(self.encoder(X))
+        out1 = self.lin1(X)
+        out2 = self.relu1(out1)
+        # what we want self.decoder1(self.relu1(self.lin1(X)))
+        #self.enc = ortho(out)  # but the axis ?
+        self.dec = self.decoder1(out2)
+        self.decoder = self.dec #
+        return self.decoder
 
     def encode(self, X):
         return self.encoder(X)
@@ -43,7 +53,7 @@ class NeuralNet(nn.Module):
 
 
     def forward(self, x):
-        out = self.l1(x)
+        out = self.l1(x) # self.l1 = nn.Linear(input_size, hidden_size)
         out = self.relu1(out)
         out = self.l2(out)
         out = self.relu2(out)

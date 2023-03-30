@@ -83,7 +83,8 @@ def get_technicals( ta_lib_inputs, timeperiod):
     lowlowbool = np.not_equal(lowlow, 0.)
     return techfeaturenames, slowk, lowlowbool, highhighbool, parabolicsar, sma, ema, macd, macdhist, high_ema_spread , rsi
 
-# wrapper to make technicals with two time periods
+# wrapper to make technicals with two time periods Generate for 2 min, 10 min etc and then stack them so we
+# get one row
 def concat_technicals(input_lens, reserve_for_test, get_data_query, columns = None):
     # data = get_all_data(query , retdf = False )
     #input_lensx, reserve_for_test, get_data_query, columns, tablename = tablename

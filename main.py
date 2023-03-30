@@ -30,8 +30,8 @@ batch_size = 16
 total_samples = train_dataset.n_samples
 n_iterations = math.ceil(total_samples / batch_size)
 print(total_samples, n_iterations)
-num_epochs = 5
-learning_rate = 1e-4
+num_epochs = 10
+learning_rate = 1e-3
 #optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 criterion = nn.BCELoss()
