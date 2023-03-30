@@ -22,19 +22,19 @@ class AutoEncoder(torch.nn.Module):
         super().__init__()
         #self.h = int(hidden_size/2)
         self.lin1 = nn.Linear(features, hidden_size)
+        self.orthlin = ortho(self.lin1)
         #self.lin2 = nn.Linear(hidden_size, self.h)
         self.relu1 = nn.ReLU(hidden_size)
         self.encoder = self.relu1 #(self.lin1)# self.relu1
-        self.decoder1 = torch.nn.Linear(hidden_size, features)
+        self.decoder1 = ortho(torch.nn.Linear(hidden_size, features))
 
     def forward(self, X):
-        out1 = self.lin1(X)
+        out1 = self.orthlin(X)
         out2 = self.relu1(out1)
         # what we want self.decoder1(self.relu1(self.lin1(X)))
         #self.enc = ortho(out)  # but the axis ?
         self.dec = self.decoder1(out2)
-        self.decoder = self.dec #
-        return self.decoder
+        return self.dec
 
     def encode(self, X):
         return self.encoder(X)
