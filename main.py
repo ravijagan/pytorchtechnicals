@@ -94,7 +94,7 @@ for epoch in range(num_epochs):
         optimizer.zero_grad(set_to_none=True)
 
 #if anomaly detection is used encoder/decoder the y_test is only a reference to show whether anomaly or not
-f = open('deletme.csv', 'w')
+f = open('C:\\Temp\\deletme.csv', 'w')
 w = csv.writer(f)
 for i in range(1000):
     testdata = next(dataiter_test)
@@ -114,7 +114,7 @@ for i in range(1000):
             #normal case
             print(i, "\t \t \t", y_test[t].item(), "distance", dist_t.item(), "<", mid_dist.item()  )#"pred" , y_pred,  "xtest", X_test, " \n ytest", y_test)
         try:
-            w.writerow([i, y_test[t].item(),dist_t.item()])
+            w.writerow([i, dist_t.item(), y_test[t].item()])
         except:
             pass
 

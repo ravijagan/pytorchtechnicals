@@ -47,8 +47,8 @@ def getdata():
                 --timestampx , sma_2 , close, ema_2, macd_2, 
                  --*, 
                 timestampx, high_ema_spread_2, rsi_2, 
-                 sma_2, ema_2, macd_2,macd_10,
-            (lead(close, 1) over (order by timestampx)  - close) as  gain
+                 sma_2, sma_10, ema_2,ema_10, macd_2,macd_10,slowk_2, slowk_10,
+            (lead(close, 10)over (order by timestampx)  - close) as  gain
              from technicals
              where hour_min > 1000 and hour_min < 1350
          """
