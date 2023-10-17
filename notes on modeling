@@ -1,2 +1,13 @@
 https://towardsdatascience.com/encoder-decoder-model-for-multistep-time-series-forecasting-using-pytorch-5d54c6af6e60
 GRU RNN more forecasting not anomaly
+
+Goal of this project
+1 The pandas . Use it instead of sql, and do all the string manipulations
+2. day 0 All nuances in Chitta - we've read it and highighted
+    - revise reread  today
+    - Note the data processing steps . Note gotchas in a notebook
+3. day1 Select 3 algorithms for implementation
+    - design the steps
+    - Each algo for 1 week 3 weeks
+    - main faimlies lstm, cnn (1d, 2 d, ), autoencoder,
+4.

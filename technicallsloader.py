@@ -3,14 +3,23 @@ import torchvision
 import numpy as np
 import math
 import sys
-sys.path.extend(["C:\\Users\\ravi\\PycharmProjects\\ibkr-jun2021"])
-import dbutils
+sys.path.extend(["\\mnt\\c\\Users\\ravi\\PycharmProjects\\ibkr-jun2021", "C:\\Users\\ravi\\PycharmProjects\\ibkr-jun2021"])
+import utilsdb as dbutils
 from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
 # gradient computation etc. not efficient for whole data set
 # -> divide dataset into small batches
 
+import pandas as pd
+
+from sqlalchemy import create_engine, text
+
+import traceback, time
+#from configs import *
+
+import numpy as np
+import time
 from torch.utils.data import Dataset, DataLoader
 print("cuda available", torch.cuda.is_available())
 if torch.cuda.is_available():
