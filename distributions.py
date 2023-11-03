@@ -1,6 +1,7 @@
 #https://nbviewer.org/github/srom/distributions/blob/2021-01-05/notebook/NN%20parametrization%20of%20distribution.ipynb
 # 3400 data points to train. we may need several a second to hit this scale. Tick data :)
-# 10 per second then 10 mins to get 3600 
+# 10 per second then 10 mins to get 3600
+# 10/31/2023 been playng around is this same as pytorchtechnical on github
 class DeepNormal(nn.Module):
 
     def __init__(self, n_inputs, n_hidden):
