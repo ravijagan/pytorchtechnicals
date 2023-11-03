@@ -1,2 +1,8 @@
 https://towardsdatascience.com/encoder-decoder-model-for-multistep-time-series-forecasting-using-pytorch-5d54c6af6e60
 GRU RNN more forecasting not anomaly
+
+https://github.com/Vaibhavs10/fast-whisper-finetuning
+
+Wsl is it a docker ?  moved postfresdata to D by changing registry
+inside wsl
+ psql -h `grep nameserver /etc/resolv.conf | awk '{print $2}'` -p 5432 -d ravi -U black
