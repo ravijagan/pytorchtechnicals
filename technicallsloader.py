@@ -4,7 +4,7 @@ import numpy as np
 import math
 import sys
 sys.path.extend(["\\mnt\\c\\Users\\ravi\\PycharmProjects\\ibkr-jun2021", "C:\\Users\\ravi\\PycharmProjects\\ibkr-jun2021"])
-import utilsdb as dbutils
+import utils.dbutils
 from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.model_selection import train_test_split
