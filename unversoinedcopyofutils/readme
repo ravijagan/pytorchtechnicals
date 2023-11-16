@@ -1,0 +1,7 @@
+Files in this folder are not to be run. they should idealy have an exit or raise at the first line
+simply to share with collaborators as git and copy of files is getting to be a pain
+
+utils comes from private github , shared via this computers file system
+on github th elocal git cannot be checked in as the root is somewhere else
+
+so need to make a copy from time to time, and share the copy
